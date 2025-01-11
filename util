@@ -1,0 +1,42 @@
+#!/bin/bash
+
+die() {
+    echo "$@" >&2
+    exit 1
+}
+
+yesno() {
+    [[ -t 0 ]] || return 0
+    local response
+    read -r -p "$1 [y/N] " response
+    [[ $response == [yY] ]] || exit 1
+}
+
+today() {
+    TZ=Asia/Tokyo date +"%Y-%m-%d" | tr -d "\n"
+}
+
+cmd_update() {
+    git add --all
+    git commit -m "Update"
+    git push origin $(git branch --show-current)
+}
+
+cmd_add() {
+    [ -z $1 ] && die "Error: Please specify post's title"
+    local title="$1"
+    local post="_posts/$(today)-$title.md"
+    [ -e $post ] && (yesno "Do you want to overwrite $1?" || return)
+    cat << EOF > $post
+---
+layout: post
+title:  "$title"
+---
+EOF
+}
+
+case "$1" in
+    update|u) shift; cmd_update "$@" ;;
+    add|a) shift; cmd_add "$@" ;;
+    *) die "Error: $1: No such subcommand"
+esac
