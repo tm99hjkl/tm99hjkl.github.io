@@ -17,9 +17,13 @@ today() {
 }
 
 cmd_update() {
+    local option="$1"
     git add --all
     git commit -m "Update"
-    git push origin $(git branch --show-current)
+    case "$option" in
+        p|push) git push origin $(git branch --show-current);;
+        *) return
+    esac
 }
 
 cmd_add() {
