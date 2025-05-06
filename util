@@ -42,6 +42,6 @@ EOF
 
 case "$1" in
     update|u) shift; cmd_update "$@" ;;
-    add|a) shift; cmd_add "$@" ;;
+    new|add|a) shift; cmd_add "$@" ;;
     *) die "Error: $1: No such subcommand"
 esac
